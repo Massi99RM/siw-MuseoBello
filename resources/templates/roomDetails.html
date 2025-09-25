@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${room.name}"></title>
+    <link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+    <header class="site-header">
+        <!-- NAV SINISTRA -->
+        <div class="nav-left">
+            <nav class="main-nav">
+                <ul>
+                    <li><a th:href="@{/home}">Home</a></li>
+                    <li><a th:href="@{/artists}">Artisti in Esposizione</a></li>
+                    <li><a th:href="@{/rooms}">Visualizza Sale</a></li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/manageArtworks}">Gestisci Museo</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- NAV DESTRA -->
+        <div class="nav-right">
+            <a th:href="@{/login}">Logout</a>
+        </div>
+    </header>
+    
+    <main class="content-wrapper">
+        <h1 class="page-title" th:text="${room.name}"></h1>
+        <h2>Artista: <span th:text="${room.artist.name}"></span></h2>
+
+        <p th:text="${room.artist.biography}" class="artist-biography"></p>
+
+        <h3>Opere presenti nella sala:</h3>
+        <div th:if="${artworks}" class="artworks-gallery">
+            <div th:each="artwork, iterStat : ${artworks}" 
+                 th:if="${iterStat.index % 2 == 0}"
+                 class="artwork-pair">
+                
+                <div class="artwork-card">
+                    <img th:src="${artwork.imageUrl}" th:alt="${artwork.title}" class="artwork-image">
+                    <div class="artwork-info">
+                        <h4 th:text="${artwork.title}"></h4>
+                        <p class="artwork-year" th:text="${artwork.year}"></p>
+                        <p class="artwork-description" th:text="${artwork.description}"></p>
+                    </div>
+                </div>
+                
+                <div th:if="${iterStat.index + 1 < #lists.size(artworks)}" class="artwork-card">
+                    <img th:src="${artworks[iterStat.index + 1].imageUrl}" 
+                         th:alt="${artworks[iterStat.index + 1].title}" 
+                         class="artwork-image">
+                    <div class="artwork-info">
+                        <h4 th:text="${artworks[iterStat.index + 1].title}"></h4>
+                        <p class="artwork-year" th:text="${artworks[iterStat.index + 1].year}"></p>
+                        <p class="artwork-description" th:text="${artworks[iterStat.index + 1].description}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <p th:unless="${artworks}">Nessuna opera presente in questa sala.</p>
+    </main>
+	
+	<!-- Modal per visualizzare immagini ingrandite -->
+	<div id="imageModal" class="image-modal" onclick="closeModal()">
+	    <span class="close-modal">&times;</span>
+	    <img id="modalImage" class="modal-content">
+	</div>
+
+	<script>
+	function openModal(src, alt) {
+	    document.getElementById('imageModal').style.display = 'block';
+	    document.getElementById('modalImage').src = src;
+	    document.getElementById('modalImage').alt = alt;
+	}
+
+	function closeModal() {
+	    document.getElementById('imageModal').style.display = 'none';
+	}
+
+	// Aggiungi event listener a tutte le immagini
+	document.addEventListener('DOMContentLoaded', function() {
+	    const images = document.querySelectorAll('.artwork-image');
+	    images.forEach(img => {
+	        img.onclick = function() {
+	            openModal(this.src, this.alt);
+	        };
+	    });
+	});
+
+	// Chiudi modal con ESC
+	document.addEventListener('keydown', function(event) {
+	    if (event.key === 'Escape') {
+	        closeModal();
+	    }
+	});
+	</script>
+</body>
+</html>

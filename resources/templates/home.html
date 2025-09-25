@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+    <link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+
+	<header class="site-header">
+	    <!-- NAV SINISTRA -->
+	    <div class="nav-left">
+	        <nav class="main-nav">
+	        </nav>
+	    </div>
+
+	    <!-- NAV DESTRA -->
+	    <div class="nav-right">
+	        <a th:href="@{/login}">Logout</a>
+	    </div>
+	</header>
+
+
+    <!-- Titolo -->
+    <h1 class="page-title">Cosa desideri fare?</h1>
+
+    <!-- Menu scelte -->
+    <div class="menu-options">
+        <a th:href="@{/artists}" class="menu-button">Visualizza Artisti</a>
+        <a th:href="@{/rooms}" class="menu-button">Visualizza Sale</a>
+        <a th:href="@{/admin/manageArtworks}" 
+           class="menu-button" 
+           sec:authorize="hasRole('ADMIN')">Gestisci Museo</a>
+    </div>
+
+</body>
+</html>

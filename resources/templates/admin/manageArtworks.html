@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Museo</title>
+    <link rel="stylesheet" th:href="@{/css/stile.css}">
+</head>
+<body>
+    <header class="site-header">
+        <!-- NAV SINISTRA -->
+        <div class="nav-left">
+            <nav class="main-nav">
+                <ul>
+                    <li><a th:href="@{/home}">Home</a></li>
+                    <li><a th:href="@{/artists}">Artisti in Esposizione</a></li>
+                    <li><a th:href="@{/rooms}">Visualizza Sale</a></li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/manageArtworks}">Gestisci Museo</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- NAV DESTRA -->
+        <div class="nav-right">
+            <a th:href="@{/login}">Logout</a>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <h1 class="page-title">Gestione Museo Bello</h1>
+        
+        <!-- Sezione per gestire sale -->
+        <section class="manage-rooms-section">
+            <h2>Gestione Sale</h2>
+            
+            <!-- Form per aggiungere nuova sala CON prima opera -->
+            <div class="add-room-form">
+                <h3>Aggiungi Nuova Sala (con prima opera)</h3>
+                <form th:action="@{/admin/insertRoomWithArtwork}" method="post">
+                    <!-- Dati Sala -->
+                    <div>
+                        <label for="roomName">Nome Sala:</label>
+                        <input type="text" name="roomName" id="roomName" required>
+                    </div>
+                    
+                    <!-- Dati Artista -->
+                    <div>
+                        <label for="artistName">Nome Artista:</label>
+                        <input type="text" name="artistName" id="artistName" required>
+                    </div>
+                    
+                    <div>
+                        <label for="artistBio">Biografia Artista:</label>
+                        <textarea name="artistBiography" id="artistBio" rows="2"></textarea>
+                    </div>
+                    
+                    <!-- Dati Prima Opera -->
+                    <div>
+                        <label for="artworkTitle">Titolo Prima Opera:</label>
+                        <input type="text" name="artworkTitle" id="artworkTitle" required>
+                    </div>
+                    
+                    <div>
+                        <label for="artworkYear">Anno Opera:</label>
+                        <input type="number" name="artworkYear" id="artworkYear" min="1" max="2024" required>
+                    </div>
+                    
+                    <div>
+                        <label for="artworkDescription">Descrizione Opera:</label>
+                        <textarea name="artworkDescription" id="artworkDescription" rows="2" required></textarea>
+                    </div>
+					
+					<div>
+					    <label for="artworkImageUrl">URL Immagine Opera:</label>
+					    <input type="url" name="artworkImageUrl" id="artworkImageUrl" 
+					           placeholder="https://esempio.com/immagine.jpg" required>
+					</div>
+                    
+                    <button type="submit">Crea Sala con Prima Opera</button>
+                </form>
+            </div>
+            
+            <!-- Lista sale esistenti -->
+            <div class="existing-rooms">
+                <h3>Sale Esistenti</h3>
+                <div th:if="${rooms}" class="rooms-list">
+                    <div th:each="room : ${rooms}" class="room-item">
+                        <span th:text="${room.name}"></span> 
+                        (Artista: <span th:text="${room.artist.name}"></span>)
+                        
+                        <form th:action="@{'/admin/deleteRoom/' + ${room.id}}" 
+                              method="post" style="display: inline; margin-left: 10px;"
+                              onsubmit="return confirm('Sei sicuro? Questa azione eliminerà anche tutte le opere nella sala!')">
+                            <button type="submit" class="delete-btn">Elimina Sala</button>
+                        </form>
+                    </div>
+                </div>
+                <p th:unless="${rooms}">Nessuna sala presente.</p>
+            </div>
+        </section>
+
+        <!-- Sezione per aggiungere nuova opera -->
+        <section class="add-artwork-section">
+            <h2>Aggiungi Nuova Opera</h2>
+            <form th:action="@{/admin/insertArtwork}" th:object="${newArtwork}" method="post" class="artwork-form">
+                <div>
+                    <label for="title">Titolo:</label>
+                    <input type="text" th:field="*{title}" id="title" required>
+                </div>
+                
+                <div>
+                    <label for="year">Anno:</label>
+                    <input type="number" th:field="*{year}" id="year" min="1" max="2024" required>
+                </div>
+                
+                <div>
+                    <label for="description">Descrizione:</label>
+                    <textarea th:field="*{description}" id="description" rows="3" required></textarea>
+                </div>
+				
+				<div>
+				    <label for="imageUrl">URL Immagine:</label>
+				    <input type="url" th:field="*{imageUrl}" id="imageUrl" 
+				           placeholder="https://esempio.com/immagine.jpg" required>
+				</div>
+                
+                <div>
+                    <label for="artist">Artista:</label>
+                    <select th:field="*{artist}" id="artist" required>
+                        <option value="">Seleziona un artista</option>
+                        <option th:each="artist : ${artists}" 
+                                th:value="${artist.id}" 
+                                th:text="${artist.name}"></option>
+                    </select>
+                </div>
+                
+                <button type="submit">Aggiungi Opera</button>
+            </form>
+        </section>
+
+        <!-- Sezione per visualizzare e gestire opere esistenti -->
+        <section class="manage-existing-artworks">
+            <h2>Opere Esistenti</h2>
+            
+            <div th:if="${artists}" class="artists-artworks-container">
+                <div th:each="artist : ${artists}" class="artist-section">
+                    <h3 th:text="${artist.name}" class="artist-name"></h3>
+                    
+                    <div th:if="${artist.artworks}" class="artworks-list">
+                        <div th:each="artwork : ${artist.artworks}" class="artwork-management-item">
+							<div class="artwork-info">
+							    <div class="artwork-preview">
+							        <img th:src="${artwork.imageUrl}" th:alt="${artwork.title}" 
+							             class="artwork-thumbnail">
+							        <div class="artwork-details">
+							            <strong th:text="${artwork.title}"></strong> 
+							            (<span th:text="${artwork.year}"></span>)
+							            <p th:text="${artwork.description}" class="artwork-description"></p>
+							        </div>
+							    </div>
+							</div>
+                            
+                            <div class="artwork-actions">
+                                <!-- Form per modificare opera -->
+                                <button type="button" th:onclick="'toggleEditForm(' + ${artwork.id} + ')'" 
+                                        class="edit-btn">Modifica</button>
+                                
+                                <!-- Form per eliminare opera -->
+                                <form th:action="@{'/admin/deleteArtwork/' + ${artwork.id}}" 
+                                      method="post" style="display: inline;"
+                                      onsubmit="return confirm('Sei sicuro di voler eliminare questa opera?')">
+                                    <button type="submit" class="delete-btn">Elimina</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Form nascosto per la modifica -->
+                            <div th:id="'editForm-' + ${artwork.id}" class="edit-form" style="display: none;">
+                                <form th:action="@{'/admin/updateArtwork/' + ${artwork.id}}" method="post">
+                                    <div>
+                                        <label>Titolo:</label>
+                                        <input type="text" th:value="${artwork.title}" name="title" required>
+                                    </div>
+                                    <div>
+                                        <label>Anno:</label>
+                                        <input type="number" th:value="${artwork.year}" name="year" required>
+                                    </div>
+                                    <div>
+                                        <label>Descrizione:</label>
+                                        <textarea name="description" th:text="${artwork.description}" required></textarea>
+                                    </div>
+									
+									<div>
+									    <label>URL Immagine:</label>
+									    <input type="url" th:value="${artwork.imageUrl}" name="imageUrl" 
+									           placeholder="https://esempio.com/immagine.jpg" required>
+									</div>
+                                    <button type="submit">Salva Modifiche</button>
+                                    <button type="button" th:onclick="'toggleEditForm(' + ${artwork.id} + ')'">Annulla</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p th:unless="${artist.artworks}" class="no-artworks">
+                        Nessuna opera presente per questo artista.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            function toggleEditForm(artworkId) {
+                var form = document.getElementById('editForm-' + artworkId);
+                if (form.style.display === 'none') {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            }
+        </script>
+
+        <p th:if="${successMessage}" th:text="${successMessage}" class="success-message"></p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}" class="error-message"></p>
+    </main>
+    
+</body>
+</html>
