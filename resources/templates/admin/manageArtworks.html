@@ -55,6 +55,12 @@
                         <label for="artistBio">Biografia Artista:</label>
                         <textarea name="artistBiography" id="artistBio" rows="2"></textarea>
                     </div>
+					
+					<div>
+					    <label for="artistImageUrl">URL Immagine Artista:</label>
+					    <input type="url" name="artistImageUrl" id="artistImageUrl" 
+					           placeholder="https://esempio.com/foto-artista.jpg" required>
+					</div>
                     
                     <!-- Dati Prima Opera -->
                     <div>
@@ -83,22 +89,53 @@
             </div>
             
             <!-- Lista sale esistenti -->
-            <div class="existing-rooms">
-                <h3>Sale Esistenti</h3>
-                <div th:if="${rooms}" class="rooms-list">
-                    <div th:each="room : ${rooms}" class="room-item">
-                        <span th:text="${room.name}"></span> 
-                        (Artista: <span th:text="${room.artist.name}"></span>)
-                        
-                        <form th:action="@{'/admin/deleteRoom/' + ${room.id}}" 
-                              method="post" style="display: inline; margin-left: 10px;"
-                              onsubmit="return confirm('Sei sicuro? Questa azione eliminerà anche tutte le opere nella sala!')">
-                            <button type="submit" class="delete-btn">Elimina Sala</button>
-                        </form>
-                    </div>
-                </div>
-                <p th:unless="${rooms}">Nessuna sala presente.</p>
-            </div>
+			<!-- Lista sale esistenti -->
+			<div class="existing-rooms">
+			    <h3>Sale Esistenti</h3>
+			    <div th:if="${rooms}" class="rooms-list">
+			        <div th:each="room : ${rooms}" class="room-item">
+			            <div class="room-info">
+			                <div class="room-basic-info">
+			                    <strong th:text="${room.name}"></strong> 
+			                    (Artista: <span th:text="${room.artist.name}"></span>)
+			                </div>
+			                
+			                <div class="room-actions">
+			                    <button type="button" th:onclick="'toggleRoomEditForm(' + ${room.id} + ')'" 
+			                            class="edit-btn">Modifica Artista</button>
+			                    
+			                    <form th:action="@{'/admin/deleteRoom/' + ${room.id}}" 
+			                          method="post" style="display: inline; margin-left: 10px;"
+			                          onsubmit="return confirm('Sei sicuro? Questa azione eliminerà anche tutte le opere nella sala!')">
+			                        <button type="submit" class="delete-btn">Elimina Sala</button>
+			                    </form>
+			                </div>
+			            </div>
+			            
+			            <!-- Form nascosto per modificare l'artista -->
+			            <div th:id="'roomEditForm-' + ${room.id}" class="room-edit-form" style="display: none;">
+			                <form th:action="@{'/admin/updateArtist/' + ${room.artist.id}}" method="post">
+			                    <div>
+			                        <label>Nome Artista:</label>
+			                        <input type="text" th:value="${room.artist.name}" name="name" required>
+			                    </div>
+			                    <div>
+			                        <label>Biografia:</label>
+			                        <textarea name="biography" th:text="${room.artist.biography}" rows="3"></textarea>
+			                    </div>
+			                    <div>
+			                        <label>URL Immagine Artista:</label>
+			                        <input type="url" th:value="${room.artist.imageUrl}" name="imageUrl" 
+			                               placeholder="https://esempio.com/foto-artista.jpg" required>
+			                    </div>
+			                    <button type="submit">Salva Modifiche Artista</button>
+			                    <button type="button" th:onclick="'toggleRoomEditForm(' + ${room.id} + ')'">Annulla</button>
+			                </form>
+			            </div>
+			        </div>
+			    </div>
+			    <p th:unless="${rooms}">Nessuna sala presente.</p>
+			</div>
         </section>
 
         <!-- Sezione per aggiungere nuova opera -->
@@ -219,6 +256,15 @@
                     form.style.display = 'none';
                 }
             }
+			
+			function toggleRoomEditForm(roomId) {
+			    var form = document.getElementById('roomEditForm-' + roomId);
+			    if (form.style.display === 'none') {
+			        form.style.display = 'block';
+			    } else {
+			        form.style.display = 'none';
+			    }
+			}
         </script>
 
         <p th:if="${successMessage}" th:text="${successMessage}" class="success-message"></p>

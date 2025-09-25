@@ -3,11 +3,11 @@ INSERT INTO users (id, username, password, role) VALUES (1, 'Valerio', '$2a$10$/
 INSERT INTO users (id, username, password, role) VALUES (2, 'Riccardo', '$2a$10$6KTe5Mj8EIL0WBTII3RZR.X1J3HqAuPDjtF6FS8ExuKBLiXM1vDMS', 'USER');
 
 -- ARTISTI
-INSERT INTO artists (id, name, biography) VALUES (1, 'Leonardo da Vinci', 'Pittore e inventore rinascimentale italiano.');
-INSERT INTO artists (id, name, biography) VALUES (2, 'Vincent van Gogh', 'Pittore olandese post-impressionista.');
-INSERT INTO artists (id, name, biography) VALUES (3, 'Pablo Picasso', 'Pittore e scultore spagnolo, padre del cubismo.');
-INSERT INTO artists (id, name, biography) VALUES (4, 'Claude Monet', 'Fondatore dell impressionismo francese.');
-INSERT INTO artists (id, name, biography) VALUES (5, 'Michelangelo Buonarroti', 'Scultore, pittore e architetto rinascimentale italiano.');
+INSERT INTO artists (id, name, biography, image_url) VALUES (1, 'Leonardo da Vinci', 'Pittore e inventore rinascimentale italiano.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Leonardo_self.jpg/440px-Leonardo_self.jpg');
+INSERT INTO artists (id, name, biography, image_url) VALUES (2, 'Vincent van Gogh', 'Pittore olandese post-impressionista.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg/440px-Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_%28454045%29.jpg');
+INSERT INTO artists (id, name, biography, image_url) VALUES (3, 'Pablo Picasso', 'Pittore e scultore spagnolo, padre del cubismo.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Pablo_picasso_1.jpg/440px-Pablo_picasso_1.jpg');
+INSERT INTO artists (id, name, biography, image_url) VALUES (4, 'Claude Monet', 'Fondatore dell impressionismo francese.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Claude_Monet_1899_Nadar_crop.jpg/440px-Claude_Monet_1899_Nadar_crop.jpg');
+INSERT INTO artists (id, name, biography, image_url) VALUES (5, 'Michelangelo Buonarroti', 'Scultore, pittore e architetto rinascimentale italiano.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Michelangelo_Daniele_da_Volterra_%28dettaglio%29.jpg/440px-Michelangelo_Daniele_da_Volterra_%28dettaglio%29.jpg');
 
 -- SALE (ogni artista ha una sala unica)
 INSERT INTO rooms (id, name, artist_id) VALUES (1, 'Sala Leonardo', 1);

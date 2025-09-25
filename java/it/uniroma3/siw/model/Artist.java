@@ -15,6 +15,9 @@ public class Artist {
     private String name;
 
     private String biography;
+    
+    @Column(length = 500)
+    private String imageUrl;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Artwork> artworks;
@@ -25,9 +28,10 @@ public class Artist {
     // --- Costruttori ---
     public Artist() {}
 
-    public Artist(String name, String biography) {
+    public Artist(String name, String biography, String imageUrl) {
         this.name = name;
         this.biography = biography;
+        this.imageUrl = imageUrl;
     }
 
     // --- Getter & Setter ---
@@ -69,5 +73,13 @@ public class Artist {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+    
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

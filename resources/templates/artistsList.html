@@ -33,21 +33,26 @@
     <h1 class="page-title">Lista degli Artisti</h1>
     
     <div class="artists-container" th:if="${artists}">
-        <div class="artist-card" th:each="artist : ${artists}">
-            <h3 th:text="${artist.name}">Nome Artista</h3>
-            <p th:text="${artist.biography}">Biografia</p>
-            
-            <div th:if="${artist.artworks != null and !artist.artworks.isEmpty()}">
-                <h4>Opere:</h4>
-                <ul>
-                    <li th:each="artwork : ${artist.artworks}">
-                        <strong th:text="${artwork.title}">Titolo Opera</strong> 
-                        (<span th:text="${artwork.year}">Anno</span>)
-                        <p th:text="${artwork.description}">Descrizione Opera</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
+		<div class="artist-card" th:each="artist : ${artists}">
+		    <div class="artist-header">
+		        <img th:src="${artist.imageUrl}" th:alt="${artist.name}" class="artist-photo">
+		        <div class="artist-info">
+		            <h3 th:text="${artist.name}">Nome Artista</h3>
+		            <p th:text="${artist.biography}">Biografia</p>
+		        </div>
+		    </div>
+		    
+		    <div th:if="${artist.artworks != null and !artist.artworks.isEmpty()}">
+		        <h4>Opere:</h4>
+		        <ul>
+		            <li th:each="artwork : ${artist.artworks}">
+		                <strong th:text="${artwork.title}">Titolo Opera</strong> 
+		                (<span th:text="${artwork.year}">Anno</span>)
+		                <p th:text="${artwork.description}">Descrizione Opera</p>
+		            </li>
+		        </ul>
+		    </div>
+		</div>
     </div>
     
     <p th:unless="${artists}">Nessun artista presente nel database.</p>

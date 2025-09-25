@@ -24,7 +24,7 @@ body {
     align-items: center;
 }
 
-/* Spazio per tutte le pagine quando è presente l'header fisso */
+/* Spazio per tutte le pagine quando Ã¨ presente l'header fisso */
 body:has(.site-header) {
     padding-top: 90px; /* spazio aggiuntivo per header fisso */
 }
@@ -286,6 +286,37 @@ button.primary:hover {
     background-color: #5848d6;
     transform: translateY(-3px);
 }
+
+.welcome-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.welcome-image {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+}
+
+.welcome-message h1 {
+    font-size: 2.5rem;
+    color: #2c2c54;
+    margin-bottom: 10px;
+}
+
+.welcome-message p {
+    font-size: 1.1rem;
+    color: #3b3a5c;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
 
 /* =====================
    LAYOUT CONTENUTO - CORRETTO
@@ -730,4 +761,38 @@ h3 {
 
 .close-modal:hover {
     color: #ccc;
+}
+
+/* =====================
+   MODAL PER IMMAGINE ARTISTA
+===================== */
+.artist-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.artist-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
+    flex-shrink: 0;
+}
+
+.artist-info {
+    flex: 1;
+}
+
+.artist-info h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.artist-info p {
+    margin: 0;
+    line-height: 1.5;
+    color: #666;
 }

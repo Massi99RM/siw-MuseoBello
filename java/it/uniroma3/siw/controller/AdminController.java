@@ -146,13 +146,15 @@ public class AdminController {
 	public String insertRoomWithArtwork(@RequestParam("roomName") String roomName,
 	                                  @RequestParam("artistName") String artistName,
 	                                  @RequestParam("artistBiography") String artistBiography,
+	                                  @RequestParam("artistImageUrl") String artistImageUrl,
 	                                  @RequestParam("artworkTitle") String artworkTitle,
 	                                  @RequestParam("artworkYear") String artworkYear,
 	                                  @RequestParam("artworkDescription") String artworkDescription,
+	                                  @RequestParam("artworkImageUrl") String artworkImageUrl,  // QUESTO MANCAVA!
 	                                  Model model) {
 	    try {
 	        // Crea artista (non salvarlo!)
-	        Artist newArtist = new Artist(artistName.trim(), artistBiography);
+	    	Artist newArtist = new Artist(artistName.trim(), artistBiography, artistImageUrl.trim());
 
 	        // Crea sala (qui scatterà il cascade su artist)
 	        Room newRoom = new Room(roomName.trim(), newArtist);
@@ -165,6 +167,7 @@ public class AdminController {
 
 	        // Crea prima opera (artista e room ora sono managed)
 	        Artwork firstArtwork = new Artwork(artworkTitle.trim(), artworkYear, artworkDescription, savedRoom.getArtist(), savedRoom);
+	        firstArtwork.setImageUrl(artworkImageUrl.trim()); 
 	        artworkService.save(firstArtwork);
 
 	        model.addAttribute("successMessage", "Sala, artista e prima opera creati con successo!");
@@ -178,6 +181,39 @@ public class AdminController {
 	    model.addAttribute("rooms", rooms != null ? rooms : Collections.emptyList());
 	    model.addAttribute("newArtwork", new Artwork());
 	    model.addAttribute("newRoom", new Room());
+	    return "admin/manageArtworks";
+	}
+	
+	// Aggiorna artista esistente
+	@PostMapping("/updateArtist/{id}")
+	public String updateArtist(@PathVariable("id") Long id, 
+	                          @RequestParam("name") String name,
+	                          @RequestParam("biography") String biography,
+	                          @RequestParam("imageUrl") String imageUrl,
+	                          Model model) {
+	    try {
+	        Artist existingArtist = artistService.findById(id).orElse(null);
+	        if (existingArtist != null) {
+	            existingArtist.setName(name.trim());
+	            existingArtist.setBiography(biography);
+	            existingArtist.setImageUrl(imageUrl.trim());
+	            artistService.save(existingArtist);
+	            model.addAttribute("successMessage", "Artista aggiornato con successo!");
+	        } else {
+	            model.addAttribute("errorMessage", "Artista non trovato!");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        model.addAttribute("errorMessage", "Errore nell'aggiornamento dell'artista: " + e.getMessage());
+	    }
+	    
+	    // Ricarica la pagina
+	    List<Artist> artists = artistService.findAll();
+	    List<Room> rooms = roomService.findAll();
+	    model.addAttribute("rooms", rooms != null ? rooms : Collections.emptyList());
+	    model.addAttribute("newRoom", new Room());
+	    model.addAttribute("artists", artists != null ? artists : Collections.emptyList());
+	    model.addAttribute("newArtwork", new Artwork());
 	    return "admin/manageArtworks";
 	}
 
